@@ -7,11 +7,12 @@ def clean_data(df: pd.DataFrame, mapper: dict[str, str], to_split: str, columns:
     exclude = ['corrected inflection','and','lemma uncertain', 'spelling error/correction']
     mask = df[to_split].isna() & ~df['translation'].isin(exclude)
     df[to_split] = df[to_split].fillna(df.loc[mask, 'translation'])
-    d = ['verse', 'pos', 'number', 'gender', 'tense', 'person', 'binyan', 'other']
-    df = df.drop(d, axis=1)
+    shared = list(set(df.columns.values).intersection(columns))
+    df = df.drop(shared, axis=1)
+    df = df.drop('verse', axis=1)
     
     # Splitting
-    for c in cols:
+    for c in columns:
         pat_txt = '|'.join(mapper[c])
         pat_txt = r'\b(?:' + pat_txt + r')\b'
         patt = re.compile(pat_txt, re.IGNORECASE)
@@ -22,11 +23,11 @@ def clean_data(df: pd.DataFrame, mapper: dict[str, str], to_split: str, columns:
     return df
 
 
-def create_mapper(df: pd.DataFrame, cols: list[str]) -> dict[str, str]:
+def create_mapper(df: pd.DataFrame, columns: list[str]) -> dict[str, str]:
     mapper = {a:[
         val for sub in df[c].unique().tolist() if pd.notna(sub)
         for val in re.split(r'[, ]+', sub)
-    ] for a, c in zip(cols, cols)}
+    ] for a, c in zip(columns, columns)}
 
     mapper['binyan'].extend(['nitpalpel', 'nitpoel', 'hithaphel'])
     mapper['tense'].append('passiveimperfect')
@@ -53,6 +54,6 @@ megilot_fixed = clean_data(megilot, mapper, 'fts', cols)
 megilot_fixed.info()
 
 # Saving the fixed to csv
-mishna_fixed.to_csv('data/mishna_fixed_v3.csv', index=False, quotechar='"', quoting=1)
-megilot_fixed.to_csv('data/megilot_fixed_v3.csv', index=False, quotechar='"', quoting=1)
+mishna_fixed.to_csv('data/mishna_fixed.csv', index=False, quotechar='\'', quoting=1)
+megilot_fixed.to_csv('data/megilot_fixed.csv', index=False, quotechar='\'', quoting=1)
 
