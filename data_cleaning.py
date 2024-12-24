@@ -13,6 +13,7 @@ def clean_data(df: pd.DataFrame, mapper: dict[str, str], to_split: str, columns:
     # Splitting
     for c in cols:
         pat_txt = '|'.join(mapper[c])
+        pat_txt = r'\b(?:' + pat_txt + r')\b'
         patt = re.compile(pat_txt, re.IGNORECASE)
         df[c] = (
             df[to_split].map(patt.findall, na_action='ignore')
@@ -52,6 +53,6 @@ megilot_fixed = clean_data(megilot, mapper, 'fts', cols)
 megilot_fixed.info()
 
 # Saving the fixed to csv
-mishna_fixed.to_csv('data/mishna_fixed_v2.csv', index=False, quotechar='"', quoting=1)
-megilot_fixed.to_csv('data/megilot_fixed_v2.csv', index=False, quotechar='"', quoting=1)
+mishna_fixed.to_csv('data/mishna_fixed_v3.csv', index=False, quotechar='"', quoting=1)
+megilot_fixed.to_csv('data/megilot_fixed_v3.csv', index=False, quotechar='"', quoting=1)
 
