@@ -54,6 +54,6 @@ megilot_fixed = clean_data(megilot, mapper, 'fts', cols)
 megilot_fixed.info()
 
 # Saving the fixed to csv
-mishna_fixed.to_csv('data/mishna_fixed.csv', index=False)#, quotechar='\'', quoting=1)
-megilot_fixed.to_csv('data/megilot_fixed.csv', index=False)#, quotechar='\'', quoting=1)
+mishna_fixed.to_csv('data/mishna_fixed.csv', index=False)
+megilot_fixed.to_csv('data/megilot_fixed.csv', index=False)
 
